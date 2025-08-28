@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
-import { QRCodeCanvas } from "qrcode.react";
 
 export default function App() {
   const [guests, setGuests] = useState([]);
