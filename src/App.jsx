@@ -45,8 +45,7 @@ export default function App() {
     console.log(guestList)
     setGuests(guestList);
     setLoading(false);
-    setResult(null)
-    setSearch("")
+    setSelectedGuest(null);
   };
 
   useEffect(() => {
@@ -96,79 +95,88 @@ export default function App() {
   if (loading) return <p>Loading guest data...</p>;
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>🎉 Seating Chart 🎉</h1>
+    <div
+      className="mx-auto bg-white shadow rounded overflow-hidden"
+      style={{
+        width: "430px",   // iPhone 15 Pro Max logical width
+        height: "932px",  // iPhone 15 Pro Max logical height
+        maxWidth: "100%", // fallback if smaller screen
+      }}
+    >
+      <div style={{ padding: "20px" }}>
+        <h1>🎉 Seating Chart 🎉</h1>
 
-      {/* If no data → upload page */}
-      {guests.length === 0 ? (
-        <div>
-          <p>No guest data found. Please upload Excel:</p>
-          <input type="file" accept=".xlsx" onChange={handleUpload} />
-        </div>
-      ) : (
-        <div style={{ marginTop: "20px" }}>
-          <button
-            onClick={fetchGuests}
-            style={{
-              position: "absolute",
-              top: "20px",
-              right: "20px",
-              padding: "10px 16px",
-              backgroundColor: "#4c1d95",
-              color: "white",
-              borderRadius: "6px",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            Clear
-          </button>
-          {/* Searchable Dropdown */}
-          <Select
-            options={options}
-            onChange={handleChange}
-            placeholder="Select or type your name..."
-            isClearable
-          />
+        {/* If no data → upload page */}
+        {guests.length === 0 ? (
+          <div>
+            <p>No guest data found. Please upload Excel:</p>
+            <input type="file" accept=".xlsx" onChange={handleUpload} />
+          </div>
+        ) : (
+          <div style={{ marginTop: "20px" }}>
+            {/* <button
+              onClick={fetchGuests}
+              style={{
+                position: "absolute",
+                top: "20px",
+                right: "20px",
+                padding: "10px 16px",
+                backgroundColor: "#4c1d95",
+                color: "white",
+                borderRadius: "6px",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Clear
+            </button> */}
+            {/* Searchable Dropdown */}
+            <Select
+              options={options}
+              onChange={handleChange}
+              placeholder="Select or type your name..."
+              isClearable
+            />
 
-          {/* Display Result */}
-          {selectedGuest && (
-            <div className="mt-6 p-4 rounded-lg shadow bg-green-100">
-              <p className="text-lg font-semibold">{selectedGuest.name}</p>
-              <p>
-                <b>Table:</b> {selectedGuest.table}
-              </p>
+            {/* Display Result */}
+            {selectedGuest && (
+              <div className="mt-6 p-4 rounded-lg shadow bg-green-100">
+                <p className="text-lg font-semibold">{selectedGuest.name}</p>
+                <p>
+                  <b>Table:</b> {selectedGuest.table}
+                </p>
                 <img
                   src={`/image/table-layout.jpg`}
-                  className="mt-3 mx-auto rounded shadow w-32 p-2"
+                  width={390} height={400}
                 />
-            </div>
-          )}
+              </div>
+            )}
 
 
-          {search && !result && (
-            <p style={{ marginTop: "20px" }}>No matching guest found.</p>
-          )}
+            {!selectedGuest && (
+              <p style={{ marginTop: "20px" }}>No matching guest found.</p>
+            )}
+          </div>
+        )}
+
+        {/* Upload option for admin even when data exists */}
+        <div style={{ marginTop: "40px" }}>
+          <h3>Admin: Upload new guest list</h3>
+          <input type="file" accept=".xlsx" onChange={handleUpload} />
         </div>
-      )}
 
-      {/* Upload option for admin even when data exists */}
-      <div style={{ marginTop: "40px" }}>
-        <h3>Admin: Upload new guest list</h3>
-        <input type="file" accept=".xlsx" onChange={handleUpload} />
-      </div>
-
-      {/* QR Code */}
-      <div style={{ marginTop: "40px" }}>
-        <h2>Scan this QR code to open the app</h2>
-        <QRCodeCanvas
-          value="https://myseatingapp.vercel.app" // Replace with deployed URL
-          size={200}
-          bgColor="#ffffff"
-          fgColor="#4c1d95"
-          level="H"
-          includeMargin={true}
-        />
+        {/* QR Code */}
+        <div style={{ marginTop: "40px" }}>
+          <h2>Scan this QR code to open the app</h2>
+          <QRCodeCanvas
+            value="https://myseatingapp.vercel.app" // Replace with deployed URL
+            size={200}
+            bgColor="#ffffff"
+            fgColor="#4c1d95"
+            level="H"
+            includeMargin={true}
+          />
+        </div>
       </div>
     </div>
   );
