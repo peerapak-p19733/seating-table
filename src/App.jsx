@@ -98,8 +98,8 @@ export default function App() {
     <div
       className="mx-auto bg-white shadow rounded overflow-hidden"
       style={{
-        width: "430px",   // iPhone 15 Pro Max logical width
-        height: "932px",  // iPhone 15 Pro Max logical height
+        width: "390px",   // iPhone 15 Pro Max logical width
+        height: "844px",  // iPhone 15 Pro Max logical height
         maxWidth: "100%", // fallback if smaller screen
       }}
     >
