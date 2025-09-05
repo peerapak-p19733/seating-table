@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Select from "react-select";
+import { Select, Upload, Button, Card, Typography, Spin, message } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import { QRCodeCanvas } from "qrcode.react";
 import { initializeApp } from "firebase/app";
@@ -23,40 +24,35 @@ const firebaseConfig = {
   appId: "1:826573826467:web:bf21ac3e79a14c1ba39216",
   measurementId: "G-RHR1KYDH60"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const { Title, Text } = Typography;
+
 export default function App() {
   const [guests, setGuests] = useState([]);
-  const [search, setSearch] = useState("");
   const [selectedGuest, setSelectedGuest] = useState(null);
-  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [nextPage, setNextPage] = useState(false);
 
-  // Fetch guests from Firestore
-  const fetchGuests = async (factor) => {
+  const fetchGuests = async () => {
+    setLoading(true);
     const guestCol = collection(db, "seat");
     const guestSnapshot = await getDocs(guestCol);
-    const guestList = guestSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
+    const guestList = guestSnapshot.docs.map((d) => ({
+      id: d.id,
+      ...d.data(),
     }));
-    console.log(guestList)
     setGuests(guestList);
-    setLoading(false);
     setSelectedGuest(null);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchGuests();
   }, []);
 
-  // Upload Excel and insert to Firebase
-  const handleUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
+  const handleUpload = async (file) => {
     const reader = new FileReader();
     reader.onload = async (event) => {
       const data = new Uint8Array(event.target.result);
@@ -64,12 +60,9 @@ export default function App() {
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(sheet);
 
-      // Clear old guests first (optional)
       for (const g of guests) {
         await deleteDoc(doc(db, "seat", g.id));
       }
-
-      // Insert new rows
       for (const row of rows) {
         await addDoc(collection(db, "seat"), {
           name: row.name || row.Name || "",
@@ -77,107 +70,128 @@ export default function App() {
         });
       }
 
-      fetchGuests(); // reload
-      alert("Upload successful ✅");
+      fetchGuests();
+      message.success("Upload successful ✅");
     };
     reader.readAsArrayBuffer(file);
+    return false; // prevent auto upload
   };
 
-  // Prepare options for react-select
-  const options = guests.map((g) => ({ value: g.id, label: g.name }));
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin tip="Loading guest data..." size="large" />
+      </div>
+    );
+  }
 
-  // Handle selection
-  const handleChange = (option) => {
-    const guest = guests.find((g) => g.id === option?.value);
-    setSelectedGuest(guest || null);
-  };
-
-  if (loading) return <p>Loading guest data...</p>;
+  const options = guests.map((g) => ({ label: g.name, value: g.id }));
 
   return (
     <div
-      className="mx-auto bg-white shadow rounded overflow-hidden"
       style={{
-        width: "390px",   // iPhone 15 Pro Max logical width
-        height: "844px",  // iPhone 15 Pro Max logical height
-        maxWidth: "100%", // fallback if smaller screen
+        minHeight: "100vh",
+        backgroundImage:
+          "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/image/bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed", // stays still on scroll
+        // display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "20px",
       }}
     >
-      <div style={{ padding: "20px" }}>
-        <h1>🎉 Seating Chart 🎉</h1>
-
-        {/* If no data → upload page */}
-        {guests.length === 0 ? (
-          <div>
-            <p>No guest data found. Please upload Excel:</p>
-            <input type="file" accept=".xlsx" onChange={handleUpload} />
-          </div>
-        ) : (
-          <div style={{ marginTop: "20px" }}>
-            {/* <button
-              onClick={fetchGuests}
-              style={{
-                position: "absolute",
-                top: "20px",
-                right: "20px",
-                padding: "10px 16px",
-                backgroundColor: "#4c1d95",
-                color: "white",
-                borderRadius: "6px",
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              Clear
-            </button> */}
-            {/* Searchable Dropdown */}
-            <Select
-              options={options}
-              onChange={handleChange}
-              placeholder="Select or type your name..."
-              isClearable
-            />
-
-            {/* Display Result */}
-            {selectedGuest && (
-              <div className="mt-6 p-4 rounded-lg shadow bg-green-100">
-                <p className="text-lg font-semibold">{selectedGuest.name}</p>
-                <p>
-                  <b>Table:</b> {selectedGuest.table}
-                </p>
-                <img
-                  src={`/image/table-layout.jpg`}
-                  width={390} height={400}
-                />
-              </div>
-            )}
-
-
-            {!selectedGuest && (
-              <p style={{ marginTop: "20px" }}>No matching guest found.</p>
-            )}
-          </div>
-        )}
-
-        {/* Upload option for admin even when data exists */}
-        <div style={{ marginTop: "40px" }}>
-          <h3>Admin: Upload new guest list</h3>
-          <input type="file" accept=".xlsx" onChange={handleUpload} />
-        </div>
-
-        {/* QR Code */}
-        <div style={{ marginTop: "40px" }}>
-          <h2>Scan this QR code to open the app</h2>
-          <QRCodeCanvas
-            value="https://myseatingapp.vercel.app" // Replace with deployed URL
-            size={200}
-            bgColor="#ffffff"
-            fgColor="#4c1d95"
-            level="H"
-            includeMargin={true}
+      {nextPage ? (
+        
+        <Card
+          style={{
+            width: "100%",
+            maxWidth: "430px",
+            borderRadius: "16px",
+            backgroundColor: "rgba(255,255,255,0.85)", // semi-transparent
+            boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+            // display: "flex",
+            flexDirection: "column",   // 👈 ensures vertical stacking
+            gap: "16px",       
+          }}
+        >
+          <Title level={2}>🎉 Seating Chart 🎉</Title>
+          <Select
+            showSearch
+            allowClear
+            style={{ width: "100%" }}
+            placeholder="Select or type your name..."
+            options={options}
+            optionFilterProp="label" // 👈 search by label instead of value
+            filterOption={(input, option) =>
+              (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+            }
+            onChange={(id) => {
+              const guest = guests.find((g) => g.id === id);
+              setSelectedGuest(guest || null);
+            }}
           />
-        </div>
-      </div>
+
+          {selectedGuest ? (
+            <Card style={{ marginTop: 16, background: "#f6ffed" }}>
+              <Text strong>{selectedGuest.name}</Text>
+              <br />
+              <Text>Table: {selectedGuest.table}</Text>
+              <br />
+              <img
+                src={`/image/table-layout.jpg`}
+                alt="Table Layout"
+                style={{ width: "100%", marginTop: 12, borderRadius: 8 }}
+              />
+            </Card>
+          ) : (
+            <Text type="secondary" style={{ marginTop: 16, display: "block" }}>
+              No matching guest selected.
+            </Text>
+          )}
+        </Card>
+      ) : (      
+        // Welcome Page
+        <Card
+          style={{
+            width: "100%",
+            maxWidth: "430px",
+            textAlign: "center",
+            borderRadius: "16px",
+            backgroundColor: "rgba(255,255,255,0.85)",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+          }}
+        >
+          <h1 style={{ fontSize: "28px", marginBottom: "16px" }}>
+            Welcome to Our Wedding
+          </h1>
+          <p style={{ fontSize: "18px", marginBottom: "24px" }}>
+            #AllInWithMildPeech.
+          </p>
+          <Button
+            type="primary"
+            size="large"
+            style={{
+              background: "#722ed1",
+              borderRadius: "8px",
+              padding: "12px 24px",
+            }}
+            onClick={() => setNextPage(true)}
+          >
+            ALL IN!!!
+          </Button>
+        </Card>
+      )}
+      {/* )} */}
+
+      {/* Admin Upload */}
+      {/* <Card style={{ marginTop: 24 }}>
+        <Title level={4}>Admin: Upload new guest list</Title>
+        <Upload beforeUpload={handleUpload} accept=".xlsx" showUploadList={false}>
+          <Button icon={<UploadOutlined />}>Upload Excel</Button>
+        </Upload>
+      </Card> */}
     </div>
   );
 }
