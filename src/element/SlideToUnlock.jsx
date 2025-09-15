@@ -1,9 +1,10 @@
 import React, { useState, useRef } from "react";
 import "./css/SlideToUnlock.css";
+import pokerI from "../assets/poker_chip.png";
 
 export default function SlideToUnlock({ onUnlock }) {
   const [dragging, setDragging] = useState(false);
-  const [offset, setOffset] = useState(0);
+  const [offset, setOffset] = useState(0); // distance from bottom
   const trackRef = useRef(null);
 
   const handleMouseDown = () => setDragging(true);
@@ -11,48 +12,46 @@ export default function SlideToUnlock({ onUnlock }) {
     if (!dragging) return;
     setDragging(false);
 
-    const trackWidth = trackRef.current.offsetWidth;
-    if (offset >= trackWidth * 0.8) {
-      onUnlock(); // fully unlocked
+    const trackHeight = trackRef.current.offsetHeight;
+    if (offset >= trackHeight * 0.8) {
+      // fully unlocked
+      onUnlock();
     } else {
-      setOffset(0); // snap back
+      // snap back
+      setOffset(0);
     }
   };
 
   const handleMouseMove = (e) => {
     if (!dragging) return;
     const rect = trackRef.current.getBoundingClientRect();
-    let newOffset = e.clientX - rect.left - 30; // 30 = half of knob width
-    const maxOffset = rect.width - 60;
+    // distance from bottom
+    let newOffset = rect.bottom - e.clientY - 30; // 30 = knob radius
+    const maxOffset = rect.height - 60;
     if (newOffset < 0) newOffset = 0;
     if (newOffset > maxOffset) newOffset = maxOffset;
-
-    window.requestAnimationFrame(() => setOffset(newOffset));
-    // setOffset(newOffset);
+    setOffset(newOffset);
   };
 
   return (
     <div
-      className="unlock-track-horizontal"
+      className="unlock-track-vertical"
       ref={trackRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseUp}
       onMouseUp={handleMouseUp}
     >
-      <div className="unlock-text-horizontal">Slide to continue</div>
+      <div className="unlock-text-vertical">Slide up to continue</div>
       <div
-        className="unlock-knob-horizontal"
+        className="unlock-knob-vertical"
         onMouseDown={handleMouseDown}
-        style={{ 
-          left: `${offset}px`,
-          transform: `translateY(-50%) scale(${1 + offset / 300})` 
-        }}
+        style={{ bottom: `${offset}px` }}
       >
-        <img
-          src="/image/poker_chip.png"
-          alt="Poker Chip"
-          style={{ width: "100px", height: "100px" }}
-        />
+          <img
+            src={pokerI}   // your image path
+            alt="Poker Chip"
+            style={{ width: "60px", height: "60px" }}
+          />
       </div>
     </div>
   );
