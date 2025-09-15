@@ -40,3 +40,18 @@
 .slider-chip.dragging {
   transition: none;
 }
+
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 70px;
+}
+
+.slider-title {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: -30px;
+  text-align: center;
+}

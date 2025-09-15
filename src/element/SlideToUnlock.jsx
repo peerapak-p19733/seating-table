@@ -1,6 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
 import "./css/SlideToUnlock.css";
+import React, { useState, useRef, useEffect } from "react";
+import { Select, Upload, Button, Card, Typography, Spin, message } from "antd";
 
+const { Title, Text } = Typography;
 const CHIP_SIZE = 60;
 
 export default function SlideToUnlock({ onComplete }) {
@@ -61,23 +63,31 @@ export default function SlideToUnlock({ onComplete }) {
   // Calculate text fade (1 → 0 as chip slides)
   const rect = trackRef.current?.getBoundingClientRect();
   const maxOffset = rect ? rect.width - CHIP_SIZE : 1;
-  const textOpacity = 1 - offset / maxOffset;
+  const textOpacity = offset / maxOffset;
+  const scale = 1 + (offset / maxOffset) * 0.5; 
 
   return (
-    <div ref={trackRef} className="slider-track">
-      <div className="slider-text" style={{ opacity: textOpacity }}>
-        ALLLLLLLLL-IN !!
-      </div>
+    <div className="slider-container">
+      <h2 className="slider-title">Welcome to our world</h2>
+      
+        <div ref={trackRef} className="slider-track">
+          <div className="slider-text" style={{ opacity: textOpacity }}>
+            ALLLLLLLLL-IN !!
+          </div>
 
-      <img
-        src="/poker_chip.png"
-        alt="poker chip"
-        draggable={false}
-        className={`slider-chip ${dragging ? "dragging" : ""}`}
-        style={{ left: `${offset}px` }}
-        onMouseDown={() => setDragging(true)}
-        onTouchStart={() => setDragging(true)}
-      />
+          <img
+            src="/poker_chip.png"
+            alt="poker chip"
+            draggable={false}
+            className={`slider-chip ${dragging ? "dragging" : ""}`}
+            style={{ 
+              left: `${offset}px`,
+              transform: `translateY(-50%) scale(${scale})`,
+            }}
+            onMouseDown={() => setDragging(true)}
+            onTouchStart={() => setDragging(true)}
+          />
+        </div>
     </div>
   );
 }
