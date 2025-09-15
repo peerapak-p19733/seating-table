@@ -1,85 +1,83 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./css/SlideToUnlock.css";
 
-export default function SlideToUnlock({ onUnlock }) {
+const CHIP_SIZE = 60;
+
+export default function SlideToUnlock({ onComplete }) {
+  const [offset, setOffset] = useState(0);
   const [dragging, setDragging] = useState(false);
-  const [offset, setOffset] = useState(0); // distance from bottom
   const trackRef = useRef(null);
 
-  const handleMouseDown = () => setDragging(true);
-  const handleMouseUp = () => {
-    if (!dragging) return;
-    setDragging(false);
+  const handleDrag = (clientX) => {
+    const rect = trackRef.current.getBoundingClientRect();
+    let newOffset = clientX - rect.left - CHIP_SIZE / 2;
 
-    const trackHeight = trackRef.current.offsetHeight;
-    if (offset >= trackHeight * 0.8) {
-      // fully unlocked
-      onUnlock();
-    } else {
-      // snap back
-      setOffset(0);
-    }
+    const maxOffset = rect.width - CHIP_SIZE;
+    if (newOffset < 0) newOffset = 0;
+    if (newOffset > maxOffset) newOffset = maxOffset;
+
+    setOffset(newOffset);
   };
 
   const handleMouseMove = (e) => {
     if (!dragging) return;
-    const rect = trackRef.current.getBoundingClientRect();
-    // distance from bottom
-    let newOffset = rect.bottom - e.clientY - 30; // 30 = knob radius
-    const maxOffset = rect.height - 60;
-    if (newOffset < 0) newOffset = 0;
-    if (newOffset > maxOffset) newOffset = maxOffset;
-    setOffset(newOffset);
+    handleDrag(e.clientX);
   };
-
-  const handleTouchStart = () => setDragging(true);
 
   const handleTouchMove = (e) => {
     if (!dragging) return;
-    e.preventDefault(); // stop page from scrolling
-    const rect = trackRef.current.getBoundingClientRect();
-    let newOffset = e.touches[0].clientX - rect.left - 30; // use first finger
-    const maxOffset = rect.width - 60;
-    if (newOffset < 0) newOffset = 0;
-    if (newOffset > maxOffset) newOffset = maxOffset;
-    setOffset(newOffset);
+    e.preventDefault();
+    handleDrag(e.touches[0].clientX);
   };
 
-  const handleTouchEnd = () => {
+  const handleEnd = () => {
     if (!dragging) return;
     setDragging(false);
 
-    const trackWidth = trackRef.current.offsetWidth;
-    if (offset >= trackWidth * 0.8) {
-      onUnlock?.(); // unlock success
+    const rect = trackRef.current.getBoundingClientRect();
+    const maxOffset = rect.width - CHIP_SIZE;
+
+    if (offset >= maxOffset - 5) {
+      onComplete?.(); // ✅ Trigger complete
     } else {
-      setOffset(0); // snap back
+      setOffset(0); // Snap back if not completed
     }
   };
 
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleEnd);
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("touchend", handleEnd);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleEnd);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleEnd);
+    };
+  }, [dragging, offset]);
+
+  // Calculate text fade (1 → 0 as chip slides)
+  const rect = trackRef.current?.getBoundingClientRect();
+  const maxOffset = rect ? rect.width - CHIP_SIZE : 1;
+  const textOpacity = 1 - offset / maxOffset;
+
   return (
-    <div
-      className="unlock-track-vertical"
-      ref={trackRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseUp}
-      onMouseUp={handleMouseUp}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      <div className="unlock-text-vertical">Slide up to continue</div>
-      <div
-        className="unlock-knob-vertical"
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
-        style={{ bottom: `${offset}px` }}
-      >
-          <img
-            src="/poker_chip.png"   // your image path
-            alt="Poker Chip"
-            style={{ width: "60px", height: "60px" }}
-          />
+    <div ref={trackRef} className="slider-track">
+      <div className="slider-text" style={{ opacity: textOpacity }}>
+        ALLLLLLLLL-IN !!
       </div>
+
+      <img
+        src="/poker_chip.png"
+        alt="poker chip"
+        draggable={false}
+        className={`slider-chip ${dragging ? "dragging" : ""}`}
+        style={{ left: `${offset}px` }}
+        onMouseDown={() => setDragging(true)}
+        onTouchStart={() => setDragging(true)}
+      />
     </div>
   );
 }

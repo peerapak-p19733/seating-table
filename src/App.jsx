@@ -157,7 +157,7 @@ export default function App() {
         // </Card>
       ) : (      
         // Welcome Page
-        <SlideToUnlock onUnlock={() => setNextPage(true)} />
+        <SlideToUnlock onComplete={() => setNextPage(true)} />
         // <div className="frosted-content">
         //   <h1 style={{ fontSize: "28px", marginBottom: "16px" }}>
         //     Welcome to Our Wedding
