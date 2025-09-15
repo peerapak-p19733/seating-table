@@ -12,6 +12,7 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
+import SlideToUnlock from "./element/SlideToUnlock";
 
 // Firebase config
 const firebaseConfig = {
@@ -104,20 +105,22 @@ export default function App() {
     >
       {nextPage ? (
         
-        <Card
-          style={{
-            width: "100%",
-            maxWidth: "430px",
-            borderRadius: "16px",
-            backgroundColor: "rgba(255,255,255,0.85)", // semi-transparent
-            boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-            // display: "flex",
-            flexDirection: "column",   // 👈 ensures vertical stacking
-            gap: "16px",       
-          }}
-        >
+        // <Card
+        //   style={{
+        //     width: "100%",
+        //     maxWidth: "430px",
+        //     borderRadius: "16px",
+        //     backgroundColor: "rgba(255,255,255,0.85)", // semi-transparent
+        //     boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+        //     display: "flex",
+        //     flexDirection: "column",   // 👈 ensures vertical stacking
+        //     gap: "16px",       
+        //   }}
+        // >
+        <div className="frosted-content">
           <Title level={2}>🎉 Seating Chart 🎉</Title>
           <Select
+            className="glass-search"
             showSearch
             allowClear
             style={{ width: "100%" }}
@@ -144,44 +147,41 @@ export default function App() {
                 alt="Table Layout"
                 style={{ width: "100%", marginTop: 12, borderRadius: 8 }}
               />
-            </Card>
+            // </Card>
           ) : (
             <Text type="secondary" style={{ marginTop: 16, display: "block" }}>
               No matching guest selected.
             </Text>
           )}
-        </Card>
+          </div>
+        // </Card>
       ) : (      
         // Welcome Page
-        <Card
-          style={{
-            width: "100%",
-            maxWidth: "430px",
-            textAlign: "center",
-            borderRadius: "16px",
-            backgroundColor: "rgba(255,255,255,0.85)",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-          }}
-        >
-          <h1 style={{ fontSize: "28px", marginBottom: "16px" }}>
-            Welcome to Our Wedding
-          </h1>
-          <p style={{ fontSize: "18px", marginBottom: "24px" }}>
-            #AllInWithMildPeech.
-          </p>
-          <Button
-            type="primary"
-            size="large"
-            style={{
-              background: "#722ed1",
-              borderRadius: "8px",
-              padding: "12px 24px",
-            }}
-            onClick={() => setNextPage(true)}
-          >
-            ALL IN!!!
-          </Button>
-        </Card>
+        <SlideToUnlock onUnlock={() => setNextPage(true)} />
+        // <div className="frosted-content">
+        //   <h1 style={{ fontSize: "28px", marginBottom: "16px" }}>
+        //     Welcome to Our Wedding
+        //   </h1>
+        //   <p style={{ fontSize: "18px", marginBottom: "24px" }}>
+        //     #AllInLoveWithMildPeech.
+        //   </p>
+        //   <Button
+        //     type="primary"
+        //     size="large"
+        //     className="unlock-button"
+        //     style={{
+        //       background: "#722ed1",
+        //       borderRadius: "8px",
+        //       padding: "12px 24px",
+        //       color: "#fff",
+        //       position: "relative",
+        //       overflow: "hidden",
+        //     }}
+        //     onClick={() => setNextPage(true)}
+        //   >
+        //     ALL IN!!!
+        //   </Button>
+        // </div>
       )}
       {/* )} */}
 

@@ -1,0 +1,42 @@
+.unlock-track-horizontal {
+  position: relative;
+  width: 420px;
+  height: 72px;
+  border-radius: 36px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+}
+
+.unlock-text-horizontal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.unlock-knob-horizontal {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0px;
+  width: 60px;
+  height: 60px;
+  cursor: grabbing;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: left 0.2s ease;
+   transition: left 0.5s ease, transform 0.5s ease; /* <-- smooth movement */
+}
