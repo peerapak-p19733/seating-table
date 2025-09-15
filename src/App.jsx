@@ -97,7 +97,7 @@ export default function App() {
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed", // stays still on scroll
-        // display: "flex",
+        display: "flex",
         justifyContent: "center",
         alignItems: "center",
         padding: "20px",
