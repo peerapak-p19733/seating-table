@@ -1,5 +1,5 @@
 import "./css/SlideToUnlock.css";
-import pokerI from "../assets/poker_chip.png";
+import pokerI from "../../public/image/poker_chip.png";
 import React, { useState, useRef, useEffect } from "react";
 
 const CHIP_SIZE = 60;
