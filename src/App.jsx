@@ -133,7 +133,7 @@ export default function App() {
                 alt="Table Layout"
                 style={{ width: "100%", marginTop: 12, borderRadius: 8 }}
               />
-            // </Card>
+            </Card>
           ) : (
             <Text type="secondary" style={{ marginTop: 16, display: "block" }}>
               No matching guest selected.

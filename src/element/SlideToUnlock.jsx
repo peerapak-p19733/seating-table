@@ -1,8 +1,7 @@
 import "./css/SlideToUnlock.css";
+import pokerI from "../assets/poker_chip.png";
 import React, { useState, useRef, useEffect } from "react";
-import { Select, Upload, Button, Card, Typography, Spin, message } from "antd";
 
-const { Title, Text } = Typography;
 const CHIP_SIZE = 60;
 
 export default function SlideToUnlock({ onComplete }) {
@@ -76,7 +75,8 @@ export default function SlideToUnlock({ onComplete }) {
           </div>
 
           <img
-            src="/poker_chip.png"
+            src={pokerI}
+            // src="/poker_chip.png"
             alt="poker chip"
             draggable={false}
             className={`slider-chip ${dragging ? "dragging" : ""}`}
