@@ -1,6 +1,5 @@
-import "./css/SlideToUnlock.css";
-import pokerI from "../../public/image/poker_chip.png";
 import React, { useState, useRef, useEffect } from "react";
+import "../css/SlideToUnlock.css";
 
 const CHIP_SIZE = 60;
 
@@ -62,21 +61,31 @@ export default function SlideToUnlock({ onComplete }) {
   // Calculate text fade (1 → 0 as chip slides)
   const rect = trackRef.current?.getBoundingClientRect();
   const maxOffset = rect ? rect.width - CHIP_SIZE : 1;
+  const textfade = 0.5 - offset / maxOffset;
   const textOpacity = offset / maxOffset;
   const scale = 1 + (offset / maxOffset) * 0.5; 
 
   return (
     <div className="slider-container">
+      <img
+        src="/image/mp.png"
+        alt="mp"
+        width={"50%"}
+        height={"50%"}
+      />
       <h2 className="slider-title">Welcome to our world</h2>
+      <h3 className="slider-sub-title">#AllInLoveWithMildPeech</h3>
       
         <div ref={trackRef} className="slider-track">
+          <div className="slider-text" style={{ opacity: textfade }}>
+            Slide to ALL-IN
+          </div>
           <div className="slider-text" style={{ opacity: textOpacity }}>
             ALLLLLLLLL-IN !!
           </div>
 
           <img
-            src={pokerI}
-            // src="/poker_chip.png"
+            src="/image/poker_chip.png"
             alt="poker chip"
             draggable={false}
             className={`slider-chip ${dragging ? "dragging" : ""}`}

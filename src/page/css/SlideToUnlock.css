@@ -7,7 +7,7 @@
   border-radius: 50px;
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  overflow: hidden;
+  overflow: visible;
   user-select: none;
   touch-action: none;
 }
@@ -22,7 +22,7 @@
   font-weight: bold;
   pointer-events: none;
   white-space: nowrap;
-  transition: opacity 0.2s ease-out;
+  transition: opacity 0.2s linear;
 }
 
 .slider-chip {
@@ -51,6 +51,14 @@
 .slider-title {
   color: #fff;
   font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.slider-sub-title {
+  color: #fff;
+  font-size: 16px;
   font-weight: bold;
   margin-bottom: -30px;
   text-align: center;
