@@ -156,9 +156,9 @@ export default function App() {
                 alt="Table Layout"
                 style={{ width: "100%", marginTop: 12, borderRadius: 8 }}
               />
-              <Button onClick={handleStoryPage} variant="link">
+              {/* <Button onClick={handleStoryPage} variant="link">
                 มารู้จักพวกเราให้มากขึ้นกว่าเดิมกัน
-              </Button>
+              </Button> */}
             </Card>
           )}
         </div>
@@ -169,12 +169,12 @@ export default function App() {
       )}
 
       {/* Admin Upload */}
-      {/* <Card style={{ marginTop: 24 }}>
+      <Card style={{ marginTop: 24 }}>
         <Title level={4}>Admin: Upload new guest list</Title>
         <Upload beforeUpload={handleUpload} accept=".xlsx" showUploadList={false}>
           <Button icon={<UploadOutlined />}>Upload Excel</Button>
         </Upload>
-      </Card> */}
+      </Card>
     </div>
   );
 }
