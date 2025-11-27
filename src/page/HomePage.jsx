@@ -133,7 +133,7 @@ export default function App() {
             showSearch
             allowClear
             style={{ width: "100%" }}
-            placeholder="Select or type your name..."
+            placeholder="ค้นหาด้วยชื่อจริง หรือชื่อเล่น"
             options={options}
             optionFilterProp="label" // 👈 search by label instead of value
             filterOption={(input, option) =>
@@ -152,7 +152,7 @@ export default function App() {
               <Text>Table: {selectedGuest.table}</Text>
               <br />
               <img
-                src={`/image/table-layout.jpg`}
+                src={`/image/table-layout.png`}
                 alt="Table Layout"
                 style={{ width: "100%", marginTop: 12, borderRadius: 8 }}
               />
