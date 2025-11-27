@@ -127,7 +127,7 @@ export default function App() {
     >
       {nextPage ? (
         <div className="frosted-content">
-          <Title level={2}>🎉 Seating Chart 🎉</Title>
+          <Title level={2}>Seating Search</Title>
           <Select
             className="glass-search"
             showSearch
@@ -147,9 +147,11 @@ export default function App() {
           />
           {selectedGuest && (
             <Card style={{ marginTop: 16, background: "#f6ffed" }}>
-              <Text strong>{selectedGuest.name}</Text>
+              
+              <Text strong style={{fontSize: 20}}>Table: {selectedGuest.table}</Text>
+              
               <br />
-              <Text>Table: {selectedGuest.table}</Text>
+              <Text>{selectedGuest.name}</Text>
               <br />
               <img
                 src={`/image/table-layout.png`}
