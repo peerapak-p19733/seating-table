@@ -169,12 +169,12 @@ export default function App() {
       )}
 
       {/* Admin Upload */}
-      <Card style={{ marginTop: 24 }}>
+      {/* <Card style={{ marginTop: 24 }}>
         <Title level={4}>Admin: Upload new guest list</Title>
         <Upload beforeUpload={handleUpload} accept=".xlsx" showUploadList={false}>
           <Button icon={<UploadOutlined />}>Upload Excel</Button>
         </Upload>
-      </Card>
+      </Card> */}
     </div>
   );
 }
